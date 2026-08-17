@@ -4,7 +4,9 @@ import { INITIAL_NAGPUR_JUNCTIONS } from '../data/nagpurJunctions';
 // -----------------------------------------------------------------------
 //  FastAPI Backend Configuration
 // -----------------------------------------------------------------------
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 
+  (import.meta as any).env?.VITE_API_URL || 
+  (typeof window !== 'undefined' && window.location.port === '3000' ? 'http://localhost:8000' : '');
 
 const WEATHER_CODE_MAP: Record<string, number> = {
   Clear: 0,

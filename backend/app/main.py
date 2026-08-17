@@ -412,3 +412,22 @@ async def get_sample_cctv_analysis(
     results["timestamp"] = datetime.utcnow().isoformat() + "Z"
     results["is_sample"] = True
     return results
+
+
+# ---------------------------------------------------------------------------
+# Static SPA Frontend Mounting (For Single Unified Deployment)
+# ---------------------------------------------------------------------------
+dist_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "dist")
+if os.path.exists(dist_dir):
+    from fastapi.staticfiles import StaticFiles
+    from fastapi.responses import FileResponse
+
+    app.mount("/assets", StaticFiles(directory=os.path.join(dist_dir, "assets")), name="assets")
+
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        file_path = os.path.join(dist_dir, full_path)
+        if os.path.exists(file_path) and os.path.isfile(file_path):
+            return FileResponse(file_path)
+        return FileResponse(os.path.join(dist_dir, "index.html"))
+
